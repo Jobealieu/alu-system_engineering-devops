@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+# Script Name: 1-install_nginx_web_server
+# Description: Installs and configures Nginx to serve a page containing "Holberton School for the win!"
+
+# Exit immediately if a command exits with a non-zero status
+set -e
+
+# Update package lists
+apt-get update -y
+
+# Install nginx
+apt-get install -y nginx
+
+# Ensure nginx is listening on port 80 (default)
+# Replace the default index page with required content
+echo "Holberton School for the win!" | tee /var/www/html/index.nginx-debian.html > /dev/null
+
+# Restart nginx using service (systemctl not allowed)
+service nginx restart
