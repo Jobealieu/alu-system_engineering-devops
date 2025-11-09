@@ -7,8 +7,13 @@ apt-get update -y
 # Install nginx
 apt-get install nginx -y
 
-# Create custom index page with "Holberton School"
+# Create custom index page with "Holberton School" in both possible locations
 echo "Holberton School for the win!" > /var/www/html/index.nginx-debian.html
+echo "Holberton School for the win!" > /var/www/html/index.html
 
-# Start nginx service (without using systemctl)
-service nginx start
+# Ensure Nginx is configured to listen on port 80
+sed -i 's/listen 80 default_server;/listen 80;/g' /etc/nginx/sites-available/default
+sed -i 's/listen \[::\]:80 default_server;/listen [::]:80;/g' /etc/nginx/sites-available/default
+
+# Restart nginx to apply changes
+service nginx restart
