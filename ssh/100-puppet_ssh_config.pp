@@ -1,16 +1,12 @@
-# Configures ssh for dev
-include stdlib
-
-file_line { 'no_password_auth':
-  ensure  => present,
-  path    => '/etc/ssh/ssh_config',
-  line    => '    PasswordAuthentication no',
-  replace => true,
+# Puppet manifest to configure SSH client
+file_line { 'Turn off passwd auth':
+  path  => '/etc/ssh/ssh_config',
+  line  => '    PasswordAuthentication no',
+  match => '^#?PasswordAuthentication',
 }
 
-file_line { 'identity_file':
-  ensure  => present,
-  path    => '/etc/ssh/ssh_config',
-  line    => '    IdentityFile ~/.ssh/school',
-  replace => true,
+file_line { 'Declare identity file':
+  path  => '/etc/ssh/ssh_config',
+  line  => '    IdentityFile ~/.ssh/school',
+  match => '^#?IdentityFile',
 }
