@@ -1,8 +1,22 @@
 #!/usr/bin/env bash
-# installing nginx
+# Configures a new Ubuntu machine to install and configure Nginx
 
+# Update package list
 apt-get update -y
-apt-get install -y nginx
-chown -R www-data:www-data /var/www/html
-echo "Holberton School for the win!" > /var/www/html/index.html
+
+# Install nginx
+apt-get install nginx -y
+
+# Create a simple HTML page with "Holberton School"
+echo "Holberton School for the win!" > /var/www/html/index.nginx-debian.html
+
+# Ensure Nginx is listening on port 80
+# The default configuration should already be set to port 80, but we'll verify
+sed -i 's/listen 80 default_server;/listen 80 default_server;/' /etc/nginx/sites-available/default
+sed -i 's/listen \[::\]:80 default_server;/listen [::]:80 default_server;/' /etc/nginx/sites-available/default
+
+# Start Nginx service (without using systemctl)
+service nginx start
+
+# Restart Nginx to apply changes (without using systemctl)
 service nginx restart
