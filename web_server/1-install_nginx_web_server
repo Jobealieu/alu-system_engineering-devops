@@ -7,17 +7,37 @@ apt-get update -y
 # Install nginx
 apt-get install nginx -y
 
-# Allow Nginx through firewall if ufw is active
-ufw allow 'Nginx HTTP' 2>/dev/null || true
+# Create the content with "Holberton School"
+echo "Holberton School for the win!" | tee /var/www/html/index.html /var/www/html/index.nginx-debian.html > /dev/null
 
-# Create a simple HTML page with "Holberton School"
-echo "Holberton School for the win!" > /var/www/html/index.html
+# Configure Nginx default site to ensure it's listening on port 80
+cat > /etc/nginx/sites-available/default <<'EOF'
+server {
+    listen 80 default_server;
+    listen [::]:80 default_server;
 
-# Remove default index.nginx-debian.html if it exists
+    root /var/www/html;
+    index index.html index.htm index.nginx-debian.html;
+
+    server_name _;
+
+    location / {
+        try_files $uri $uri/ =404;
+    }
+}
+EOF
+
+# Ensure the site is enabled
+ln -sf /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
+
+# Remove default nginx page if exists
 rm -f /var/www/html/index.nginx-debian.html
 
-# Ensure Nginx is enabled and started
-service nginx start
+# Test nginx configuration
+nginx -t
 
-# Restart Nginx to apply changes (without using systemctl)
-service nginx restart
+# Kill any existing nginx processes
+pkill nginx || true
+
+# Start nginx
+service nginx start
