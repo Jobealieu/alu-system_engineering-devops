@@ -10,16 +10,30 @@ apt-get update -y
 apt-get install nginx -y
 
 # Create a simple HTML page with "Holberton School"
-echo "Holberton School for the win!" > /var/www/html/index.html
+echo "Holberton School" > /var/www/html/index.html
 
-# Ensure nginx is configured to listen on port 80 (default configuration should already do this)
-# But let's make sure the default site is enabled
-if [ ! -f /etc/nginx/sites-enabled/default ]; then
-    ln -s /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
-fi
+# Ensure proper permissions
+chmod 644 /var/www/html/index.html
 
-# Start nginx service (using service command instead of systemctl)
+# Configure nginx to use the correct index file
+cat > /etc/nginx/sites-available/default <<'EOF'
+server {
+    listen 80 default_server;
+    listen [::]:80 default_server;
+    
+    root /var/www/html;
+    index index.html;
+    
+    server_name _;
+    
+    location / {
+        try_files $uri $uri/ =404;
+    }
+}
+EOF
+
+# Stop nginx if it's running
+service nginx stop
+
+# Start nginx
 service nginx start
-
-# Restart nginx to apply changes (using service command instead of systemctl)
-service nginx restart
