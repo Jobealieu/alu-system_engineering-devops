@@ -1,36 +1,24 @@
 #!/usr/bin/env bash
 # Configures Nginx to redirect /redirect_me to another page with a 301 status
 
-# Update package list and install nginx
-apt-get update
+# Update and install nginx
+apt-get update -y
 apt-get install -y nginx
 
-# Create a custom default site configuration with redirect
-cat > /etc/nginx/sites-available/default <<'EOF'
-server {
-    listen 80 default_server;
-    listen [::]:80 default_server;
-    
-    root /var/www/html;
-    index index.html index.htm index.nginx-debian.html;
-    
-    server_name _;
-    
-    location /redirect_me {
-        return 301 https://www.youtube.com/watch?v=QH2-TGUlwu4;
-    }
-    
-    location / {
-        try_files $uri $uri/ =404;
-    }
-}
-EOF
+# Ensure nginx is stopped before configuration
+service nginx stop
 
-# Create the default index page with required content
+# Configure the redirect in default site
+sed -i '/server_name _;/a \    location /redirect_me {\n        return 301 https://www.youtube.com/watch?v=QH2-TGUlwu4;\n    }' /etc/nginx/sites-available/default
+
+# Ensure index page exists
 echo "Holberton School" > /var/www/html/index.html
 
-# Test nginx configuration
+# Test configuration
 nginx -t
 
-# Restart nginx without using systemctl
-service nginx restart
+# Start nginx
+service nginx start
+
+# Wait for nginx to fully start
+sleep 2
