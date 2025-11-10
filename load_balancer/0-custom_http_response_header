@@ -5,12 +5,28 @@
 apt-get update
 apt-get install -y nginx
 
-# Get the hostname
-HOSTNAME=$(hostname)
+# Create a simple HTML page
+echo "Hello World!" > /var/www/html/index.html
 
-# Configure Nginx to add custom header
+# Configure Nginx to add custom header in the http block
 # shellcheck disable=SC2154
-sed -i "/server_name _;/a \\\tadd_header X-Served-By \$hostname;" /etc/nginx/sites-available/default
+cat > /etc/nginx/sites-available/default << 'NGINX_CONFIG'
+server {
+    listen 80 default_server;
+    listen [::]:80 default_server;
 
-# Ensure nginx is running
+    root /var/www/html;
+    index index.html index.htm index.nginx-debian.html;
+
+    server_name _;
+
+    add_header X-Served-By $hostname;
+
+    location / {
+        try_files $uri $uri/ =404;
+    }
+}
+NGINX_CONFIG
+
+# Restart nginx to apply changes
 service nginx restart
