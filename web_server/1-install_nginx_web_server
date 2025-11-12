@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+# Script that installs and configures Nginx web server
+
+# Update package list
+apt-get update -y
+
+# Install Nginx
+apt-get install nginx -y
+
+# Create a simple HTML page with the required string
+echo "Holberton School for the win!" > /var/www/html/index.nginx-debian.html
+
+# Ensure Nginx is running
+service nginx start
+
+# Ensure Nginx starts on boot
+update-rc.d nginx defaults

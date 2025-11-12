@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+# Script that configures Nginx server with a 301 redirect
+
+# Update package list
+apt-get update -y
+
+# Install Nginx
+apt-get install nginx -y
+
+# Create the main page
+echo "Holberton School for the win!" > /var/www/html/index.nginx-debian.html
+
+# Add redirect configuration using a different approach
+# Insert the location block after the first 'location /' block
+sed -i '/listen 80 default_server;/a \\tlocation /redirect_me {\n\t\treturn 301 https://www.youtube.com/watch?v=QH2-TGUlwu4;\n\t}' /etc/nginx/sites-available/default
+
+# Restart Nginx to apply changes
+service nginx restart
