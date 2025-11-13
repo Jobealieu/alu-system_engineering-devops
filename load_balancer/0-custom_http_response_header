@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+# Configure Nginx with custom HTTP header X-Served-By
+
+# Update package list and install nginx
+apt-get update
+apt-get install -y nginx
+
+# Get the hostname
+HOSTNAME=$(hostname)
+
+# Create default page
+echo "Hello World!" > /var/www/html/index.html
+
+# Configure Nginx with custom header
+cat > /etc/nginx/sites-available/default <<EOF
+server {
+    listen 80 default_server;
+    listen [::]:80 default_server;
+
+    root /var/www/html;
+    index index.html index.htm index.nginx-debian.html;
+
+    server_name _;
+
+    # Add custom header
+    add_header X-Served-By \$HOSTNAME;
+
+    location / {
+        try_files \$uri \$uri/ =404;
+    }
+}
+EOF
+
+# Restart nginx
+service nginx restart
