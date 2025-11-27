@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Fix nginx
+# Fix nginx to serve on port 80
 service apache2 stop
 service nginx start
-rm /var/run/nginx.pid
+rm /run/nginx.pid
