@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Fix nginx - stop apache and configure nginx properly
+# Fix nginx - stop apache and configure nginx
 service apache2 stop
 ln -s /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
-service nginx start
+service nginx stop
