@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Fix nginx configuration and content
-echo "1" > /usr/share/nginx/html/index.html
+# Fix nginx to run on port 80
 service apache2 stop
-service nginx start
+nginx
+rm -f /var/run/nginx.pid
