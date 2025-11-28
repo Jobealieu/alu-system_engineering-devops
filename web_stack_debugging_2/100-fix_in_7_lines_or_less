@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Configures Nginx to run as nginx user on port 8080 in 7 lines or less
-sed -i 's/^user .*/user nginx;/' /etc/nginx/nginx.conf
-sed -i 's/listen 80/listen 8080/' /etc/nginx/sites-available/default
-sed -i 's/listen \[::\]:80/listen [::]:8080/' /etc/nginx/sites-available/default
-pkill -f nginx
-su -s /bin/bash -c '/usr/sbin/nginx' nginx
+pkill apache2
+sed -i "s/#user nobody/user nginx/" /etc/nginx/nginx.conf
+sed -i "s/80/8080/g" /etc/nginx/sites-available/default
+chmod 644 /etc/nginx/nginx.conf
+su nginx -s /bin/bash -c "nginx"
