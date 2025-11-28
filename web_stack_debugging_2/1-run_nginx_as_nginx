@@ -1,26 +1,18 @@
 #!/usr/bin/env bash
-# Configure container so Nginx runs as nginx user on port 8080
+# Configure Nginx to run as nginx user and listen on port 8080
 
-# Ensure nginx user exists
-id nginx &>/dev/null || useradd -r -s /bin/false nginx
+# Update nginx.conf to run as nginx user
+sed -i 's/user .*/user nginx;/' /etc/nginx/nginx.conf
 
-# Stop any running nginx
-pkill nginx 2>/dev/null
-sleep 1
+# Update default site to listen on port 8080
+sed -i 's/listen 80 default_server;/listen 8080 default_server;/' /etc/nginx/sites-available/default
+sed -i 's/listen \[::\]:80 default_server;/listen [::]:8080 default_server;/' /etc/nginx/sites-available/default
 
-# Configure nginx to listen on port 8080
-sed -i 's/listen 80 default_server;/listen 8080 default_server;/g' /etc/nginx/sites-available/default
-sed -i 's/listen \[::\]:80 default_server/listen [::]:8080 default_server/g' /etc/nginx/sites-available/default
+# Give nginx user permission to bind to port 8080
+chmod 644 /etc/nginx/nginx.conf
 
-# Change user directive
-sed -i 's/user www-data;/user nginx;/g' /etc/nginx/nginx.conf
-
-# Change PID file location to where nginx user can write
-sed -i 's|pid /run/nginx.pid;|pid /tmp/nginx.pid;|g' /etc/nginx/nginx.conf
-
-# Create necessary directories and set permissions
-mkdir -p /var/lib/nginx /var/log/nginx
-chown -R nginx:nginx /var/lib/nginx /var/log/nginx /etc/nginx
+# Kill any existing nginx processes
+pkill apache2
 
 # Start nginx as nginx user
-sudo -u nginx /usr/sbin/nginx
+sudo -u nginx service nginx start
