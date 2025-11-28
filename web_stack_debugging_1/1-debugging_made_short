@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Fix nginx to serve on port 80
-service apache2 stop
-service nginx start
-rm /run/nginx.pid
+# Fix Nginx to listen on port 80
+ln -sf /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
+/usr/sbin/nginx
+rm -f /var/run/nginx.pid /run/nginx.pid
