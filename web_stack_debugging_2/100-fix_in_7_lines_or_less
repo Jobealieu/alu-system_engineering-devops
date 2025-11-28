@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+# Fix nginx to run as nginx user on port 8080 in 7 lines or less
+useradd -r -s /bin/false nginx 2>/dev/null; pkill nginx; sed -i 's/user .*/user nginx;/' /etc/nginx/nginx.conf
+sed -i 's/ 80 default_server/ 8080 default_server/g; s/:80 default_server/:8080 default_server/g' /etc/nginx/sites-enabled/default
+mkdir -p /var/lib/nginx/{body,proxy,fastcgi,uwsgi,scgi}; chown -R nginx:nginx /var/{log,lib}/nginx
+/usr/sbin/nginx
