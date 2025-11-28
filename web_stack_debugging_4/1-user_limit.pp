@@ -1,7 +1,6 @@
-# Increase the file descriptor limits for the holberton user
-# This manifest fixes the "Too many open files" error
-
+# Increase file descriptor limits for holberton user to prevent 'Too many open files' error
 exec { 'change-os-configuration-for-holberton-user':
-  command => 'sed -i "s/holberton hard nofile 5/holberton hard nofile 50000/" /etc/security/limits.conf && sed -i "s/holberton soft nofile 4/holberton soft nofile 50000/" /etc/security/limits.conf',
-  path    => ['/bin', '/usr/bin', '/usr/sbin'],
+  command => 'bash -c "echo \"holberton soft nofile 4096\" >> /etc/security/limits.conf && echo \"holberton hard nofile 8192\" >> /etc/security/limits.conf"',
+  path    => ['/usr/bin', '/bin'],
+  unless  => 'grep -q "holberton.*nofile" /etc/security/limits.conf',
 }
