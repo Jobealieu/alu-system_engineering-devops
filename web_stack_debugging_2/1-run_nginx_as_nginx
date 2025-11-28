@@ -1,21 +1,20 @@
 #!/usr/bin/env bash
 # Configure Nginx to run as nginx user and listen on port 8080
 
-# Kill any running apache2 or nginx processes
-pkill apache2
-pkill nginx
+# Stop all web servers
+pkill -9 apache2
+killall -9 nginx 2>/dev/null
 
-# Update nginx.conf to run as nginx user (uncomment or add the user directive)
-sed -i 's/^user .*/user nginx;/' /etc/nginx/nginx.conf
-sed -i 's/^#user/user/' /etc/nginx/nginx.conf
+# Configure nginx to run as nginx user
+sed -i 's/^user.*/user nginx;/' /etc/nginx/nginx.conf
 
-# Update default site to listen on port 8080
-sed -i 's/listen 80 default_server;/listen 8080 default_server;/' /etc/nginx/sites-enabled/default
-sed -i 's/listen \[::\]:80 default_server;/listen [::]:8080 default_server;/' /etc/nginx/sites-enabled/default
+# Configure port 8080
+sed -i 's/80/8080/g' /etc/nginx/sites-enabled/default
 
-# Fix permissions for nginx user
-chmod 755 /etc/nginx/nginx.conf
-chown -R nginx:nginx /var/log/nginx /var/lib/nginx
+# Fix ownership and permissions
+chown -R nginx:nginx /var/log/nginx
+chown -R nginx:nginx /var/lib/nginx
+chmod 755 /var/lib/nginx
 
-# Start nginx properly
-su -s /bin/bash -c '/usr/sbin/nginx' nginx
+# Start nginx as nginx user directly
+sudo -u nginx /usr/sbin/nginx -g 'daemon off;' &
